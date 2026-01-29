@@ -27,17 +27,21 @@ options.add_argument(
 
 
 def send_telegram(msg):
-    """텔레그램 알람 전송"""
     if not TELEGRAM_TOKEN or not TELEGRAM_CHAT_ID:
-        print("⚠️ 텔레그램 토큰 또는 ID가 설정되지 않았습니다.")
         return
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
-    payload = {"chat_id": TELEGRAM_CHAT_ID, "text": msg}
+    # chat_id를 확실하게 숫자로 변환하여 전송
+    payload = {
+        "chat_id": int(TELEGRAM_CHAT_ID.strip()),
+        "text": msg
+    }
     try:
         res = requests.post(url, json=payload, timeout=10)
         print(f"📡 알람 전송 상태: {res.status_code}")
+        if res.status_code != 200:
+            print(f"⚠️ 상세 에러 내용: {res.text}") # 400 에러의 구체적 이유 출력
     except Exception as e:
-        print(f"⚠️ 알람 전송 중 에러: {e}")
+        print(f"⚠️ 에러: {e}")
 
 
 def get_next_week_info():
