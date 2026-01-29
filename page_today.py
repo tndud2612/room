@@ -66,15 +66,25 @@ def run_check():
 
             print(f"📅 확인 중: {target_date}")
 
+            # 캘린더 날짜 변경 및 함수 호출 (더 안전한 버전)
             driver.execute_script(f"""
-                var date = '{target_date}';
-                var dp = $('#datepicker');
-                if(dp.length) {{
-                    dp.val(date).datepicker('update');
-                    get_theme_list(date);
-                }}
-            """)
-            time.sleep(3)
+                            var date = '{target_date}';
+                            var dp = $('#datepicker');
+                            if(dp.length) {{
+                                dp.val(date).datepicker('update');
+
+                                // 함수가 정의되어 있는지 확인 후 실행
+                                if (typeof get_theme_list === 'function') {{
+                                    get_theme_list(date);
+                                }} else {{
+                                    console.log('get_theme_list 함수를 아직 찾을 수 없습니다.');
+                                    // 대안: 직접 온체인지 이벤트 발생
+                                    dp.trigger('change');
+                                }}
+                            }}
+                        """)
+            # 날짜 클릭 후 데이터 로딩 시간을 충분히 줍니다.
+            time.sleep(4)
 
             buttons = driver.find_elements(By.TAG_NAME, "button")
             for target_time in target_times:
