@@ -24,4 +24,4 @@ jobs:
         env:
           MY_ALARM_TOKEN: ${{ secrets.MY_ALARM_TOKEN }}
           MY_CHAT_ID: ${{ secrets.MY_CHAT_ID }}
-        run: python bot.py
+        run: python page_today.py
