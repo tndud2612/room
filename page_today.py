@@ -10,7 +10,7 @@ from selenium.webdriver.common.by import By
 
 # --- [설정] ---
 WEEKEND_TIMES = ["10:50", "12:00", "13:10", "14:20", "15:30", "16:40", "17:50", "19:00", "20:10", "21:20"]
-WEEKDAY_TIMES = ["19:00", "20:10", "21:20"]
+WEEKDAY_TIMES = ["10:50", "12:00", "13:10", "14:20", "15:30", "16:40", "17:50", "19:00", "20:10", "21:20"]
 
 TELEGRAM_TOKEN = os.environ.get('MY_ALARM_TOKEN')
 TELEGRAM_CHAT_ID = os.environ.get('MY_CHAT_ID')
