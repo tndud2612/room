@@ -1,12 +1,18 @@
 name: Reservation Bot
 on:
   schedule:
-    - cron: "*/5 * * * *"
+    - cron: "2-59/5 * * * *"
   workflow_dispatch:        # 수동 실행 버튼 활성화
+  repository_dispatch:
+    types: [run-reservation-bot]
 
 jobs:
   run-bot:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    concurrency:
+      group: reservation-bot
+      cancel-in-progress: true
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
