@@ -23,7 +23,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 # --- [설정] ---
 BASE_URL = "https://xn--2e0b040a4xj.com/reservation"
 BRANCH_ID = 2
-THEME_ID = 18
+THEME_ID = 25
 WAIT_SECONDS = 12
 OPEN_HOUR_KST = 22
 
