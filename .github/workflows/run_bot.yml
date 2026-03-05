@@ -27,8 +27,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirement.txt
 
-      - name: Run Bot
+      - name: Run Earth Star Bot
         env:
           MY_ALARM_TOKEN: ${{ secrets.MY_ALARM_TOKEN }}
           MY_CHAT_ID: ${{ secrets.MY_CHAT_ID }}
         run: python earth_star.py
+
+      - name: Run Whos There Bot
+        env:
+          MY_ALARM_TOKEN: ${{ secrets.MY_ALARM_TOKEN }}
+          MY_CHAT_ID: ${{ secrets.MY_CHAT_ID }}
+        run: python whos_there.py
