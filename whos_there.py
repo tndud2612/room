@@ -51,6 +51,11 @@ def get_open_dates(now_kst: datetime) -> list[date]:
     return [(now_kst.date() + timedelta(days=offset)) for offset in range(total_days)]
 
 
+def get_theme_open_dates(now_kst: datetime, max_days: int) -> list[date]:
+    days = max(1, max_days)
+    return [(now_kst.date() + timedelta(days=offset)) for offset in range(days)]
+
+
 def build_holiday_set(open_dates: list[date]) -> set[date]:
     if holidays is None:
         raise RuntimeError("공휴일 판별을 위해 holidays 패키지가 필요합니다. 설치: pip install holidays")
@@ -189,12 +194,12 @@ def reservation_url(theme: Theme) -> str:
 
 def main() -> None:
     now_kst = get_kst_now()
-    open_dates = get_open_dates(now_kst)
-    holiday_set = build_holiday_set(open_dates)
+    default_open_dates = get_open_dates(now_kst)
+    holiday_set = build_holiday_set(default_open_dates)
 
-    date_labels = [d.strftime("%Y-%m-%d") for d in open_dates]
+    date_labels = [d.strftime("%Y-%m-%d") for d in default_open_dates]
     print(
-        f"📅 검사 기간: {date_labels[0]} ~ {date_labels[-1]} "
+        f"📅 기본 검사 기간: {date_labels[0]} ~ {date_labels[-1]} "
         f"(기준시각 KST {now_kst.strftime('%Y-%m-%d %H:%M')}, 오픈시각 {OPEN_HOUR_KST}:00)"
     )
 
@@ -204,16 +209,23 @@ def main() -> None:
         print(f"🎭 테마 검사 시작: {theme.name}")
         try:
             meta = fetch_theme_date(theme)
+            data = meta.get("data", {}) or {}
+            doing = int(data.get("doing", 0) or 0)
+            theme_days = doing if doing > 0 else len(default_open_dates)
+            theme_open_dates = get_theme_open_dates(now_kst, theme_days)
             if DEBUG:
                 print(
                     f"DEBUG: theme meta status={meta.get('status')} "
-                    f"name={meta.get('data', {}).get('name')}"
+                    f"name={data.get('name')} doing={doing}"
                 )
         except Exception as exc:
             print(f"⚠️ [{theme.name}] 메타 조회 실패: {exc}")
             continue
 
-        for target in open_dates:
+        theme_labels = [d.strftime("%Y-%m-%d") for d in theme_open_dates]
+        print(f"🗓️ [{theme.name}] 테마 검사 기간: {theme_labels[0]} ~ {theme_labels[-1]}")
+
+        for target in theme_open_dates:
             target_date = target.strftime("%Y-%m-%d")
             is_holiday = target.weekday() >= 5 or target in holiday_set
             day_name = KOR_WEEKDAYS[target.weekday()]
