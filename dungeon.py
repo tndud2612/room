@@ -348,6 +348,10 @@ def main() -> None:
         for target in open_dates:
             target_date = target.strftime("%Y-%m-%d")
             is_holiday = target.weekday() >= 5 or target in holiday_set
+            if not is_holiday:
+                if DEBUG:
+                    print(f"SKIP [평일 제외] {target_date}")
+                continue
             day_name = KOR_WEEKDAYS[target.weekday()]
             kind = "휴일" if is_holiday else "평일"
             print(f"🧭 확인: {target_date}({day_name}) [{kind}]")
