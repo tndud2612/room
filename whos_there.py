@@ -36,7 +36,8 @@ class Theme:
 
 
 THEMES = [
-    Theme(name="그카지", zizum_num=3, theme_num=7, theme_info_num=7),
+    Theme(name="아야코", zizum_num=23, theme_num=71, theme_info_num=63),
+    Theme(name="괴록", zizum_num=23, theme_num=70, theme_info_num=61),
 ]
 
 
