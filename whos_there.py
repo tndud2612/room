@@ -25,6 +25,7 @@ KOR_WEEKDAYS = ["월", "화", "수", "목", "금", "토", "일"]
 TELEGRAM_TOKEN = os.environ.get("MY_ALARM_TOKEN")
 TELEGRAM_CHAT_ID = os.environ.get("MY_CHAT_ID")
 DEBUG = os.environ.get("DEBUG_SLOT", "0") == "1"
+AVAILABLE_ENABLE_VALUES = {"Y", "1", "TRUE", "T"}
 
 
 @dataclass(frozen=True)
@@ -131,6 +132,7 @@ def fetch_theme_times(theme: Theme, target_date: str, end_day: int) -> dict[str,
 
 def parse_open_slots(resp: dict[str, Any], is_holiday: bool) -> list[str]:
     slots = set()
+    skipped_by_enable = 0
     for item in resp.get("data", []) or []:
         hh = str(item.get("hh", "")).strip().zfill(2)
         mm = str(item.get("mm", "")).strip().zfill(2)
@@ -138,14 +140,22 @@ def parse_open_slots(resp: dict[str, Any], is_holiday: bool) -> list[str]:
             continue
         slot_time = f"{hh}:{mm}"
 
-        enable = str(item.get("enable", "")).upper()
-        if enable == "N":
+        # API마다 enable 표현이 달라질 수 있어 대표 키를 순차 확인한다.
+        raw_enable = (
+            item.get("enable", item.get("is_enable", item.get("available", item.get("use_yn", ""))))
+        )
+        enable = str(raw_enable).strip().upper()
+        if enable not in AVAILABLE_ENABLE_VALUES:
+            skipped_by_enable += 1
             continue
 
         if not is_in_allowed_time_range(slot_time, is_holiday):
             continue
 
         slots.add(slot_time)
+
+    if DEBUG and skipped_by_enable:
+        print(f"DEBUG: skipped by enable={skipped_by_enable}")
 
     return sorted(slots)
 

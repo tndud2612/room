@@ -38,3 +38,9 @@ jobs:
           MY_ALARM_TOKEN: ${{ secrets.MY_ALARM_TOKEN }}
           MY_CHAT_ID: ${{ secrets.MY_CHAT_ID }}
         run: python whos_there.py
+
+      - name: Run Dungeon Bot
+        env:
+          MY_ALARM_TOKEN: ${{ secrets.MY_ALARM_TOKEN }}
+          MY_CHAT_ID: ${{ secrets.MY_CHAT_ID }}
+        run: python dungeon.py
