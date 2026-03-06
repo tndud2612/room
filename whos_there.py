@@ -16,6 +16,7 @@ except ImportError:
 BASE_SITE = "https://www.keyescape.com"
 API_URL = f"{BASE_SITE}/controller/run_proc.php"
 OPEN_HOUR_KST = 22
+THEME_RESERVATION_OPEN_HOUR_KST = 11
 
 WEEKDAY_START = "18:30"
 WEEKDAY_END = "22:30"
@@ -53,6 +54,10 @@ def get_open_dates(now_kst: datetime) -> list[date]:
 
 def get_theme_open_dates(now_kst: datetime, max_days: int) -> list[date]:
     days = max(1, max_days)
+    # 키이스케이프는 오전 11시에 다음 오픈일(+N)이 열리므로,
+    # 11시 이전에는 마지막 하루를 검사 대상에서 제외한다.
+    if now_kst.hour < THEME_RESERVATION_OPEN_HOUR_KST:
+        days = max(1, days - 1)
     return [(now_kst.date() + timedelta(days=offset)) for offset in range(days)]
 
 
